@@ -17,7 +17,7 @@ def email_send():
     temp = os.system("vcgencmd measure_temp")
     body = meminfo + '\n' + temp
     gmail.send(subject, body, app.config['RECEIVER'])
-    return body
+    return "OK"
 
 
 @app.route("/finger", methods=["GET"])
