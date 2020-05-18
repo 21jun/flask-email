@@ -1,7 +1,7 @@
 from oasis import app
 from flask import send_file, render_template
 from oasis.email import smtp
-import os
+import subprocess
 
 
 @app.route("/", endpoint="index")
@@ -13,11 +13,14 @@ def index():
 def email_send():
     gmail = smtp.GmailSMTP(app.config["SENDER"], app.config["PASSWORD"])
     subject = "Rasberry Pi Temperature"
-    meminfo = os.system("cat /proc/meminfo")
-    temp = os.system("vcgencmd measure_temp")
+
+    meminfo = subprocess.check_output(
+        "cat /proc/meminfo", shell=True, text=True)
+    temp = subprocess.check_output(
+        "vcgencmd measure_temp", shell=True, text=True)
     body = meminfo + '\n' + temp
     gmail.send(subject, body, app.config['RECEIVER'])
-    return "OK"
+    return body
 
 
 @app.route("/finger", methods=["GET"])
