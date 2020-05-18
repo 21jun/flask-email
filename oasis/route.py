@@ -1,10 +1,10 @@
 from oasis import app
-from flask import send_file
+from flask import send_file, render_template
 
 
 @app.route("/", endpoint="index")
 def index():
-    return "hello world"
+    return render_template("index.html")
 
 
 @app.route("/finger", methods=["GET"])
