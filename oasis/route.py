@@ -1,7 +1,7 @@
 from oasis import app
 from flask import send_file, render_template
 from oasis.email import smtp
-import subprocess
+from oasis.temperature.rpi_temp import check_cpu_temperature
 
 
 @app.route("/", endpoint="index")
@@ -12,13 +12,10 @@ def index():
 @app.route("/send/gmail", methods=["GET"])
 def email_send():
     gmail = smtp.GmailSMTP(app.config["SENDER"], app.config["PASSWORD"])
-    subject = "Rasberry Pi Temperature"
+    subject = "Rasberry Pi CPU Temperature"
 
-    meminfo = subprocess.check_output(
-        "cat /proc/meminfo", shell=True, text=True)
-    temp = subprocess.check_output(
-        "vcgencmd measure_temp", shell=True, text=True)
-    body = meminfo + '\n' + temp
+    temp = check_cpu_temperature
+    body = temp
     gmail.send(subject, body, app.config['RECEIVER'])
     return body
 
